@@ -22,3 +22,58 @@ f1dcaeeafeb855965535d77c55782349444b
 воспользуйтесь базой данный sqlite, postgres и т.д.
 п.с. статья на Хабре - python db-api
 """
+
+# Импортируем библиотеку, соответствующую типу нашей базы данных
+# from getpass import getpass
+# import pymysql
+import hashlib
+import mysql.connector
+
+# DROP DATABASE IF EXISTS algo2020;
+# CREATE DATABASE IF NOT EXISTS algo2020;
+#
+# USE algo2020;
+#
+# CREATE TABLE users(
+# 	id BIGINT NOT NULL AUTO_INCREMENT,
+# 	user_name VARCHAR(150) NOT NULL UNIQUE,
+# 	user_password VARCHAR(150) NOT NULL,
+#     PRIMARY KEY (id)
+# );
+
+
+connection = mysql.connector.connect(host='localhost',
+                                     user='root',
+                                     password='12341234',
+                                     database='algo2020')
+cursor = connection.cursor()
+
+
+def create_user():
+    name = input("Введите логин: ")
+    password = input("Введите пароль: ")
+    hash_pass = hashlib.sha256(name.encode() + password.encode()).hexdigest()
+    insert_user = "INSERT INTO users (user_name, user_password)" \
+                  "VALUES ('{}','{}')".format(name, hash_pass)
+    # 0d2e56b00e478e2a0795c56ce25ad636f774fdc1d5814e68d8db9eca59356790
+    cursor.execute(insert_user)
+    connection.commit()
+    print("В базе данных хранится строка: {} ".format(hash_pass))
+    return name
+
+
+def check_password(login):
+    password = input(f"Введите снова пароль для {login}: ")
+    hash_pass = hashlib.sha256(login.encode() + password.encode()).hexdigest()
+    check_hash = "SELECT user_password " \
+                 "FROM users WHERE user_name = '{}'".format(login)
+    cursor.execute(check_hash)
+    if hash_pass == cursor.fetchone()[0]:
+        print("Вы ввели правильный пароль")
+    else:
+        print("Неверный пароль")
+
+
+if __name__ == "__main__":
+    login = create_user()
+    check_password(login)

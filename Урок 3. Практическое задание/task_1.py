@@ -23,3 +23,94 @@ b) выполните со списком и словарем операции: 
 обязательно реализуйте ф-цию-декоратор и пусть она считает время
 И примените ее к своим функциям!
 """
+
+import time
+
+test_list = []
+test_dict = {}
+
+
+def check_time(func):
+    """
+    Фиксируем отсечки времени до и после выполнения основной логики
+    """
+    def wrapper(*args):
+        start = time.time()
+        func(*args)
+        end = time.time()
+        #print('Время выполнения: {} секунд.'.format(end-start))
+        return end - start
+    return wrapper
+# Заполнение
+@check_time
+def list_fullfilment(n):
+    """Сложность выполнения O(n)"""
+    for i in range(n):
+        test_list.append(i)             #O(1)
+    #test_list = [i for i in range(n)]
+
+@check_time
+def dict_fullfilment(n):
+    """Сложность выполнения O(n)"""
+    for i in range(n):
+        test_dict[i] = i                #O(1)
+
+# Изменение
+@check_time
+def list_get_item():
+    """Сложность выполнения O(1)"""
+    for i in test_list:
+        test_list[i] = 0                #O(1)
+
+
+@check_time
+def dict_get_item():
+    """Сложность выполнения O(1)"""
+    for i in range(len(test_dict)):
+        test_dict[i] = 0                #O(1)
+
+
+# Удаление
+@check_time
+def list_pop_item():
+    """Сложность выполнения O(n)"""
+    for i in range(len(test_list)):
+        return test_list.pop(i)                #O(n)
+
+
+@check_time
+def dict_pop_item():
+    """Сложность выполнения O(1)"""
+    for i in range(len(test_dict)):
+        return test_dict.pop(i)                #O(n)
+
+
+def sep():
+    print("=" * 100)
+
+
+if __name__ == "__main__":
+
+    print(f"Список заполнился за: {list_fullfilment(10000000)}")
+    print(f"Словарь заполнился за: {dict_fullfilment(10000000)}\n")
+    sep()
+
+    # Вывод по заданию а)
+    """ Список заполняется быстрее словаря при одинаковой сложности алгоритма O(n).
+    Скорее всего это связано с тем, что словарь состоит из пар key:arg, 
+    а список заполняется только по одному значению на итерации.
+    """
+
+    print(f"Выборка элемента из списка выполнена за: {list_get_item()}")
+    print(f"Выборка элемента из словаря выполнена за: {dict_get_item()}\n")
+    sep()
+    print(f"Удаление элемента из списка выполнена за: {list_pop_item()}")
+    print(f"Удаление элемента из словаря выполнена за: {dict_pop_item()}")
+    del test_list, test_dict
+
+    # Вывод по заданию б)
+    """ В словаре доступ и удаление элемента происходит быстрее чем в списке, так
+    как доступ к элементам происходит по ключу. 
+    В случае с удалением элемента словарь в принцпе имеет преимущество по сранению со списком, 
+    ведь сложность медота будет константная, а для списка линейная.
+    """

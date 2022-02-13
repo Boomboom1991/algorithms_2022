@@ -22,3 +22,25 @@
 р
 а
 """
+import hashlib
+
+hash_set = set()
+
+
+def str_hash_generator(str):
+    for s in range(len(str)):
+        for n in range(s+1, len(str) + 1):
+            if n in hash_set:
+                continue
+            else:
+                if n not in hash_set and s != n and str[s:n] != str:
+                    hash_set.add(hashlib.sha256(str[s:n].encode()).hexdigest())
+                    print(str[s:n])
+    return hash_set
+
+
+if __name__ == "__main__":
+    str = input("Введите строку: ")
+    str_hash_generator(str)
+    # не понял как в цикле функции не дать пропечатать дубль строки
+    print(f"Уникальных подстрок в строке {str}: ", len(hash_set))
